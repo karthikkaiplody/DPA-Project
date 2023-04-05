@@ -1,0 +1,494 @@
+---
+title: "DPA project_v1"
+author: "Naveen Raju Sreerama Raju Govinda Raju"
+date: "2023-04-04"
+output: html_document
+---
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(Hmisc)
+library(magrittr)
+library(ggpubr)
+```
+
+Loading dataset
+```{r}
+setwd("E:/DPA/project/")
+data <- read.csv("online_shoppers_intention (1).csv")
+
+
+head(data)
+```
+
+Number of duplicate observations
+```{r}
+sum(duplicated(data))
+```
+
+Duplicate observations
+```{r}
+data[duplicated(data), ]
+
+```
+
+Check number of observations with NA values
+```{r}
+sum(is.na(data))
+```
+
+Found out that Jan and April months is not present
+```{r}
+table(data$Month)
+```
+"as.factor", convert month column to factor data type, this is used when the column is categorical attribute with fixed number of categories, in our cases it is months of a year.
+
+"table", just shows counts of data in each month.
+Even though "June" is there in data set it is showing count as 0 because  it is denoted as "June" instead of 3 letter abbreviation "Jun" 
+```{r}
+data$Month = as.factor(data$Month)
+print(data$Month)
+# table(factor(data$Month, levels = month.abb))
+```
+
+Changing "June" to 3 character abbreviation "Jun".
+data$Month is in factor data type, so we convert it to character to change "June" to "Jun" and again convert back to factor datatype
+```{r}
+class(data$Month)
+
+data$Month <- as.character(data$Month)
+data$Month[data$Month == "June"] <- "Jun"
+data$Month <- as.factor(data$Month)
+```
+Now we can see "Jun" data set count
+```{r}
+table(data$Month)
+```
+
+factor function with levels = month.abb, this will set levels based on three letter abbrevations for each month. Therefore month.abb will set levels of factor variable in order of months Jan to Dec.
+```{r}
+data$Month = factor(data$Month, levels = month.abb)
+```
+
+We can now view the months are ordered in data set with 12 levels
+```{r}
+str(data)
+```
+### Exploratory Data Analysis
+```{r}
+ggplot(data, aes(y = Administrative)) +
+  geom_boxplot(fill='yellow', color='gray') +
+  labs(x = "", y = "Number of Administrative pages visited") +
+  theme(axis.text.x = element_text(size=12, color="black", face="bold"),
+        axis.text.y = element_text(size=12, color="black", face="bold"),
+        axis.title = element_text(size=14, color="black", face="bold"),
+        legend.position = "none",
+        plot.title = element_text(size=16, color="black", face="bold"),
+        plot.caption = element_text(size=10, color="gray", hjust=0))
+cat("Summary")
+summary(data$Administrative)
+```
+
+```{r}
+ggplot(data, aes(y = Administrative_Duration)) +
+  geom_boxplot(fill='yellow', color='gray') +
+  labs(x = "", y = "Total time spent in Administrative pages")+ 
+  theme(axis.text.x = element_text(size=12, color="black", face="bold"),
+        axis.text.y = element_text(size=12, color="black", face="bold"),
+        axis.title = element_text(size=14, color="black", face="bold"),
+        legend.position = "none",
+        plot.title = element_text(size=16, color="black", face="bold"),
+        plot.caption = element_text(size=10, color="gray", hjust=0))
+cat("Summary")
+summary(data$Administrative_Duration)
+
+```
+```{r}
+ggplot(data, aes(y = Informational)) +
+  geom_boxplot(fill='yellow', color='gray') +
+  labs(x = "", y = "Informational", 
+       title = "Number of Informational pages visited") +
+  theme(axis.text.x = element_text(size=12, color="black", face="bold"),
+        axis.text.y = element_text(size=12, color="black", face="bold"),
+        axis.title = element_text(size=14, color="black", face="bold"),
+        legend.position = "none",
+        plot.title = element_text(size=16, color="black", face="bold"),
+        plot.caption = element_text(size=10, color="gray", hjust=0))
+cat("Summary")
+summary(data$Informational)
+```
+
+```{r}
+ggplot(data, aes(y = Informational_Duration)) +
+  geom_boxplot(fill='yellow', color='gray') +
+  labs(x = "", y = "Informational_Duration", 
+       title = "Total time spent in Informational pages") +
+  theme(axis.text.x = element_text(size=12, color="black", face="bold"),
+        axis.text.y = element_text(size=12, color="black", face="bold"),
+        axis.title = element_text(size=14, color="black", face="bold"),
+        legend.position = "none",
+        plot.title = element_text(size=16, color="black", face="bold"),
+        plot.caption = element_text(size=10, color="gray", hjust=0))
+cat("Summary")
+summary(data$Informational_Duration)
+```
+
+```{r}
+ggplot(data, aes(y = ProductRelated)) +
+  geom_boxplot(fill='yellow', color='gray') +
+  labs(x = "", y = "Informational_Duration", 
+       title = "Number of ProductRelated pages visited") +
+  theme(axis.text.x = element_text(size=12, color="black", face="bold"),
+        axis.text.y = element_text(size=12, color="black", face="bold"),
+        axis.title = element_text(size=14, color="black", face="bold"),
+        legend.position = "none",
+        plot.title = element_text(size=16, color="black", face="bold"),
+        plot.caption = element_text(size=10, color="gray", hjust=0))
+cat("Summary")
+summary(data$ProductRelated)
+```
+
+```{r}
+ggplot(data, aes(y = ProductRelated_Duration)) +
+  geom_boxplot(fill='yellow', color='gray') +
+  labs(x = "", y = "Informational_Duration", 
+       title = "Total time spent in ProductRelated pages") +
+  theme(axis.text.x = element_text(size=12, color="black", face="bold"),
+        axis.text.y = element_text(size=12, color="black", face="bold"),
+        axis.title = element_text(size=14, color="black", face="bold"),
+        legend.position = "none",
+        plot.title = element_text(size=16, color="black", face="bold"),
+        plot.caption = element_text(size=10, color="gray", hjust=0))
+cat("Summary")
+summary(data$ProductRelated_Duration)
+```
+
+```{r}
+cat("\nMedian of Number of Administrative pages visited=",summary(data$Administrative)[3])
+cat("\nMedian of Number of Informational pages visited=",summary(data$Informational)[3])
+cat("\nMedian of Number of ProductRelated pages visited=",summary(data$ProductRelated)[3],"\n")
+
+cat("\nTotal time spent in Administrative pages=",summary(data$Administrative_Duration)[3])
+cat("\nTotal time spent in InformationalRelated pages=",summary(data$Informational_Duration)[3])
+cat("\nTotal time spent in ProductRelated pages=",summary(data$ProductRelated_Duration)[3],"\n")
+
+cat("\nAnalysing number of pages vist of 3 different page categories it clearly says that customers are interested more in Product related pages rather than knowing information of the product in detail.\n")
+
+cat("\nAnalysing total time spent in 3 different page categories, it clearly says that customers spend most of the time in product related pages whereas they are not intrested in spending time in information related pages")
+```
+### Defeining harmonic mean function
+```{r}
+hmean <- function(x) {
+  n <- length(x)
+  n / sum(1/x)
+}
+```
+
+
+```{r}
+ggplot(data, aes(x=Revenue, y=Administrative)) +
+  geom_boxplot(fill='yellow', color='gray') +
+  labs(x = "Revenue", y = "Number of Administrative pages visited") +
+  theme(axis.text.x = element_text(size=12, color="black", face="bold"),
+        axis.text.y = element_text(size=12, color="black", face="bold"),
+        axis.title = element_text(size=14, color="black", face="bold"),
+        legend.position = "none",
+        plot.title = element_text(size=16, color="black", face="bold"),
+        plot.caption = element_text(size=10, color="gray", hjust=0))
+
+Administrative_true<-data %>%
+  filter(Revenue == TRUE) %>%
+  group_by(Administrative)
+
+cat("\nMeadian number of adminstrative pages visted by a customer who end up buying is=",median(Administrative_true$Administrative))
+cat("\nHarmonic number of adminstrative pages visted by a customer who end up buying is=",hmean(Administrative_true$Administrative),"\n","\n")
+
+print(summary(Administrative_true$Administrative))
+
+Administrative_false<-data %>%
+  filter(Revenue == FALSE) %>%
+  group_by(Administrative)
+
+
+cat("\n\nMeadian number of adminstrative pages visted by a customer who did not end up buying is=",median(Administrative_false$Administrative))
+cat("\nHarmonic number of adminstrative pages visted by a customer who did not end up buying is=",hmean(Administrative_false$Administrative))
+cat("\n","\n")
+print(summary(Administrative_false$Administrative))
+
+```
+
+```{r}
+ggplot(data, aes(x=Revenue, y=Administrative_Duration)) +
+  geom_boxplot(fill='yellow', color='gray') +
+  labs(x = "Revenue", y = "Total time spent in Administrative pages") +
+  theme(axis.text.x = element_text(size=12, color="black", face="bold"),
+        axis.text.y = element_text(size=12, color="black", face="bold"),
+        axis.title = element_text(size=14, color="black", face="bold"),
+        legend.position = "none",
+        plot.title = element_text(size=16, color="black", face="bold"),
+        plot.caption = element_text(size=10, color="gray", hjust=0))
+
+Administrative_Duration_true<-data %>%
+  filter(Revenue == TRUE) %>%
+  group_by(Administrative_Duration)
+cat("\nMeadian duration of time spent in adminstrative pages by a customer who end up buying is=",median(Administrative_Duration_true$Administrative_Duration))
+cat("\nHarmonic duration of time spent in adminstrative pages by a customer who end up buying is=",hmean(Administrative_Duration_true$Administrative_Duration),"\n","\n")
+print(summary(Administrative_Duration_true$Administrative_Duration))
+
+Administrative_Duration_fasle<-data %>%
+  filter(Revenue == FALSE) %>%
+  group_by(Administrative_Duration)
+cat("\n\nMeadian duration of time spent in adminstrative pages by a customer who did not end up buying is=",median(Administrative_Duration_fasle$Administrative_Duration))
+cat("\nHarmonic duration of time spent in adminstrative pages by a customer who did not end up buying is=",hmean(Administrative_Duration_fasle$Administrative_Duration),"\n","\n")
+print(summary(Administrative_Duration_fasle$Administrative_Duration))
+```
+
+
+
+```{r}
+ggplot(data, aes(x=Revenue, y=Informational)) +
+  geom_boxplot(fill='yellow', color='gray') +
+  labs(x = "Revenue", y = "Number of Informational pages visited") +
+  theme(axis.text.x = element_text(size=12, color="black", face="bold"),
+        axis.text.y = element_text(size=12, color="black", face="bold"),
+        axis.title = element_text(size=14, color="black", face="bold"),
+        legend.position = "none",
+        plot.title = element_text(size=16, color="black", face="bold"),
+        plot.caption = element_text(size=10, color="gray", hjust=0))
+
+Informational_true<-data %>%
+  filter(Revenue == TRUE) %>%
+  group_by(Informational)
+
+cat("\nMeadian number of Informational pages visted by a customer who end up buying is=",median(Informational_true$Informational))
+cat("\nHarmonic number of Informational pages visted by a customer who end up buying is=",hmean(Informational_true$Informational),"\n","\n")
+
+print(summary(Informational_true$Informational))
+
+Informational_false<-data %>%
+  filter(Revenue == FALSE) %>%
+  group_by(Informational)
+cat("\n\nMeadian number of Informational pages visted by a customer who did not end up buying is=",median(Informational_false$Informational))
+cat("\nHarmonic number of Informational pages visted by a customer who did not end up buying is=",hmean(Informational_false$Informational),"\n","\n")
+
+
+print(summary(Informational_false$Informational))
+```
+
+
+```{r}
+ggplot(data, aes(x=Revenue, y=Informational_Duration)) +
+  geom_boxplot(fill='yellow', color='gray') +
+  labs(x = "Revenue", y = "Duration spent on Informational pages visited") +
+  theme(axis.text.x = element_text(size=12, color="black", face="bold"),
+        axis.text.y = element_text(size=12, color="black", face="bold"),
+        axis.title = element_text(size=14, color="black", face="bold"),
+        legend.position = "none",
+        plot.title = element_text(size=16, color="black", face="bold"),
+        plot.caption = element_text(size=10, color="gray", hjust=0))
+
+Informational_Duration_true<-data %>%
+  filter(Revenue == TRUE) %>%
+  group_by(Informational_Duration)
+
+cat("\nMeadian number of duration spent on Informational pages by a customer who end up buying is=",median(Informational_true$Informational))
+cat("\nHarmonic number of duration spent on Informational pages by a customer who end up buying is=",hmean(Informational_true$Informational),"\n","\n")
+
+print(summary(Informational_Duration_true$Informational_Duration))
+
+Informational_Duration_false<-data %>%
+  filter(Revenue == FALSE) %>%
+  group_by(Informational_Duration)
+cat("\nMeadian number of duration spent on Informational pages by a customer who did not end up buying is=",median(Informational_Duration_false$Informational))
+cat("\nHarmonic number of duration spent on Informational pages by a customer who did not end up buying is=",hmean(Informational_Duration_false$Informational),"\n","\n")
+
+print(summary(Informational_Duration_false$Informational_Duration))
+```
+
+```{r}
+ggplot(data, aes(x=Revenue, y=ProductRelated)) +
+  geom_boxplot(fill='yellow', color='gray') +
+  labs(x = "Revenue", y = "Number of ProductRelated pages visited") +
+  theme(axis.text.x = element_text(size=12, color="black", face="bold"),
+        axis.text.y = element_text(size=12, color="black", face="bold"),
+        axis.title = element_text(size=14, color="black", face="bold"),
+        legend.position = "none",
+        plot.title = element_text(size=16, color="black", face="bold"),
+        plot.caption = element_text(size=10, color="gray", hjust=0))
+
+ProductRelated_true<-data %>%
+  filter(Revenue == TRUE) %>%
+  group_by(ProductRelated)
+
+cat("\nMeadian number of ProductRelated pages visted by a customer who end up buying is=",median(ProductRelated_true$ProductRelated))
+cat("\nHarmonic number of ProductRelated pages visted by a customer who end up buying is=",hmean(ProductRelated_true$ProductRelated),"\n","\n")
+
+print(summary(ProductRelated_true$ProductRelated))
+
+ProductRelated_false<-data %>%
+  filter(Revenue == FALSE) %>%
+  group_by(ProductRelated)
+cat("\n\nMeadian number of ProductRelated pages visted by a customer who did not end up buying is=",median(ProductRelated_false$ProductRelated))
+cat("\nHarmonic number of ProductRelated pages visted by a customer who did not end up buying is=",hmean(ProductRelated_false$ProductRelated),"\n","\n")
+
+print(summary(ProductRelated_false$ProductRelated))
+```
+
+```{r}
+ggplot(data, aes(x=Revenue, y=ProductRelated_Duration)) +
+  geom_boxplot(fill='yellow', color='gray') +
+  labs(x = "Revenue", y = "Duration of ProductRelated pages visited") +
+  theme(axis.text.x = element_text(size=12, color="black", face="bold"),
+        axis.text.y = element_text(size=12, color="black", face="bold"),
+        axis.title = element_text(size=14, color="black", face="bold"),
+        legend.position = "none",
+        plot.title = element_text(size=16, color="black", face="bold"),
+        plot.caption = element_text(size=10, color="gray", hjust=0))
+
+ProductRelated_Duration_true<-data %>%
+  filter(Revenue == TRUE) %>%
+  group_by(ProductRelated_Duration)
+
+cat("\nMeadian duration of ProductRelated pages visted by a customer who end up buying is=",median(ProductRelated_Duration_true$ProductRelated_Duration))
+cat("\nHarmonic duration of ProductRelated pages visted by a customer who end up buying is=",hmean(ProductRelated_Duration_true$ProductRelated_Duration),"\n","\n")
+
+print(summary(ProductRelated_Duration_true$ProductRelated_Duration))
+
+ProductRelated_Duration_false<-data %>%
+  filter(Revenue == FALSE) %>%
+  group_by(ProductRelated_Duration)
+
+cat("\n\nMeadian duration of ProductRelated pages visted by a customer who did not end up buying is=",median(ProductRelated_Duration_false$ProductRelated_Duration))
+cat("\nHarmonic duration of ProductRelated pages visted by a customer who did not end up buying is=",hmean(ProductRelated_Duration_false$ProductRelated_Duration),"\n","\n")
+
+print(summary(ProductRelated_Duration_false$ProductRelated_Duration))
+
+```
+
+```{r}
+cat("\n\nBased on above analysis,these are the observations made:")
+cat("\nPeople who end up buying will mostly visit administrative page and spend almost 52seconds.")
+cat("\nPeople who end up not buying will mostly not visit administrative page.")
+cat("\nPeople are least interested in visiting informational page.")
+cat("\nPeople who end up buying will mostly visit product related page and spend almost 1109 seconds.")
+cat("\nPeople who will end up buying will mostly visit product related page and spend almost 510 seconds.")
+cat("\nBut people who end up buying will visit more product related than the ones who don't.")
+```
+
+```{r}
+
+
+color_scheme <- "Set2"
+plot1 <- ggdensity(data, x = "BounceRates", fill = "Revenue", color = "Revenue",
+                   add = "median", rug = TRUE, palette = color_scheme) +
+         labs(x = "Bounce Rates", y = "Density", fill = "Revenue") +
+         theme_classic()
+plot1
+
+plot2 <- ggdensity(data, x = "ExitRates", fill = "Revenue", color = "Revenue",
+                   add = "median", rug = TRUE, palette = color_scheme) +
+         labs(x = "ExitRates", y = "Density", fill = "Revenue") +
+         theme_classic()
+plot2
+
+plot3 <- ggdensity(data, x = "PageValues", fill = "Revenue", color = "Revenue",
+                   add = "median", rug = TRUE, palette = color_scheme) +
+         labs(x = "PageValues", y = "Density", fill = "Revenue") +
+         theme_classic()
+plot3
+
+```
+
+```{r}
+ggplot(data, aes(x = SpecialDay, fill = Revenue)) +
+  geom_bar(position = "dodge")
+cat("Here we can analyse that majority of revenue is on non special day, and impact of revenue due to special fay is very less.")
+```
+
+```{r}
+data$Month_numeric <- as.numeric(data$Month)
+plot1 <- ggplot(data, aes(x = Month_numeric, fill = Revenue)) +
+         geom_bar(position = "dodge") +
+         labs(x = "Month", y = "Count", fill = "Revenue") +
+         scale_x_continuous(breaks = 1:12, labels = month.abb) +
+         theme_classic()
+
+plot1
+cat("\nMost revenue is from the months of March, May, November and December")
+cat("\nLeast revenue is from the month June, July, August, September and October")
+cat("\nData is not available for January and April")
+```
+
+
+
+```{r}
+plot1 <- ggplot(data, aes(x = OperatingSystems, fill = Revenue)) +
+         geom_bar(position = "dodge") +
+         labs(x = "OperatingSystems", y = "Count", fill = "Revenue") +
+         scale_x_continuous(breaks = 1:10) +
+         theme_classic()
+
+plot1
+```
+
+```{r}
+plot1 <- ggplot(data, aes(x = Browser, fill = Revenue)) +
+         geom_bar(position = "dodge") +
+         labs(x = "Browser", y = "Count", fill = "Revenue") +
+         scale_x_continuous(breaks = 1:15) +
+         theme_classic()
+
+plot1
+```
+
+```{r}
+plot1 <- ggplot(data, aes(x = Region, fill = Revenue)) +
+         geom_bar(position = "dodge") +
+         labs(x = "Region", y = "Count", fill = "Revenue") +
+         scale_x_continuous(breaks = 1:11) +
+         theme_classic()
+
+plot1
+```
+
+```{r}
+plot1 <- ggplot(data, aes(x = TrafficType, fill = Revenue)) +
+         geom_bar(position = "dodge") +
+         labs(x = "TrafficType", y = "Count", fill = "Revenue") +
+         scale_x_continuous(breaks = 1:22) +
+         theme_classic()
+
+plot1
+```
+
+```{r}
+
+plot1 <- ggplot(data.frame(data), aes(Weekend, fill=Revenue)) + geom_bar() + labs(x = "Weekend") + labs(y = "Count")
+plot1
+
+table(data$Weekend, data$Revenue)
+cat("\nData shows that revenue on non weekend is almost thrice that of revenue on weekend")
+```
+
+```{r}
+plot1 <- ggplot(data.frame(data), aes(VisitorType, fill=Revenue)) + geom_bar() + labs(x = "Visitor type") + labs(y = "Count")
+plot1
+
+table(data$VisitorType, data$Revenue)
+cat("\nData shows that revenue from returning visitor is approximately 3.5 times as that of new visitor")
+```
+
+```{r}
+plot1 <- ggplot(data.frame(data), aes(Revenue, fill=Revenue)) + geom_bar() + labs(x = "Revenue") + labs(y = "Count")
+plot1
+
+table(data$Revenue)
+cat("\nData shows that there are more data to explain non revenue tahn revenue. That is there are approximately 5.5 times more data explaining non revenue that revenue.")
+```
+
+
+```{r}
+```
+
+
