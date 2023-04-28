@@ -7,6 +7,7 @@ output: html_document
 
 ```{r}
 library(ggplot2)
+library(caret)
 library(dplyr)
 library(Hmisc)
 library(magrittr)
@@ -15,8 +16,8 @@ library(ggpubr)
 
 Loading dataset
 ```{r}
-setwd("E:/DPA/project/")
-data <- read.csv("online_shoppers_intention (1).csv")
+#setwd("E:/DPA/project/")
+data <- read.csv("online_shoppers_intention.csv")
 
 
 head(data)
@@ -178,7 +179,7 @@ cat("\nAnalysing number of pages vist of 3 different page categories it clearly 
 
 cat("\nAnalysing total time spent in 3 different page categories, it clearly says that customers spend most of the time in product related pages whereas they are not intrested in spending time in information related pages")
 ```
-### Defeining harmonic mean function
+### Defining harmonic mean function
 ```{r}
 hmean <- function(x) {
   n <- length(x)
