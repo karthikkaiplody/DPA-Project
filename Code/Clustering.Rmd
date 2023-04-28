@@ -15,7 +15,42 @@ library(tidyverse)
 library(factoextra)
 library(cluster)
 library(fpc)
+library(ggplot2)
+library(gridExtra) 
 ```
+
+```{r, message=FALSE}
+# Load the required libraries
+library(ggplot2)
+library(corrplot)
+
+# Load the dataset from UCI repository
+dataset <- read.csv("https://archive.ics.uci.edu/ml/machine-learning-databases/00468/online_shoppers_intention.csv")
+
+# Subset the dataset to include only numeric columns
+numeric_cols <- sapply(dataset, is.numeric)
+numeric_data <- dataset[,numeric_cols]
+
+# Compute the correlation matrix
+cor_matrix <- cor(numeric_data)
+
+# Set the plot size and font size
+par(cex.main=1.2, mar=c(0,0,2,0))
+
+# Create the correlation plot using corrplot with larger plot size
+corrplot(cor_matrix, method="circle", type="lower", tl.col="black", tl.srt=45, 
+         mar=c(0, 0, 2, 0), 
+         addgrid.col="gray", 
+         addrect=4, 
+         rect.col="gray", 
+         cl.ratio=0.2, 
+         number.cex=0.7, 
+         tl.cex=0.7, 
+         title="Online Shoppers Purchase Intention Correlation Plot")
+
+```
+
+
 
 ### Aim of cluster analysis is to group observation into distinct clusters.
 ### KMeans Clustering
@@ -60,7 +95,6 @@ fviz_cluster(kmeans_result, data = data, stand = FALSE, geom = "point", ellipse.
 ### DBSCAN Clusters:
 ---
 ```{r, warning=FALSE, message=FALSE}
-
 # Perform DBSCAN clustering
 dbscan_res <- dbscan(data, eps = 0.5, MinPts = 2)
 
@@ -71,11 +105,13 @@ fviz_cluster(list(data = pca_res$x, cluster = dbscan_res$cluster), geom = "point
 ### Hierarchical Clustering
 ```{r, warning=FALSE, message=FALSE}
 # Select the columns of interest
+data <- read.csv("https://archive.ics.uci.edu/ml/machine-learning-databases/00468/online_shoppers_intention.csv")
 cols_of_interest <- c("Browser", "Region", "TrafficType", "VisitorType")
 data <- data %>% select(cols_of_interest)
 
 distances = dist(data)
 clusterData = hclust(distances, method = "ward.D2")
+
 plot(clusterData)
 ```
 ```{r}
